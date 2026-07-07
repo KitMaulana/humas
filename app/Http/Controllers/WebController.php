@@ -75,10 +75,17 @@ class WebController extends Controller
             }
         }
 
+        // Count achievements for recap
+        $countSiswaKabupaten = Achievement::where('category', 'Siswa')->where('level', 'Kabupaten')->count();
+        $countSiswaInternasional = Achievement::where('category', 'Siswa')->where('level', 'Internasional')->count();
+        $countGuru = Achievement::where('category', 'Guru')->count();
+        $countSekolah = Achievement::where('category', 'Sekolah')->count();
+
         return view('home', compact(
             'profile', 'teacherCount', 'studentCount', 'achievementCount',
             'classCount', 'ongoingSchedules', 'timeSlots', 'currentDay',
-            'currentTime', 'schedulesByGrade', 'lessonSetting'
+            'currentTime', 'schedulesByGrade', 'lessonSetting',
+            'countSiswaKabupaten', 'countSiswaInternasional', 'countGuru', 'countSekolah'
         ));
     }
 

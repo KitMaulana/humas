@@ -47,7 +47,12 @@
                                     <div class="img-thumb" style="background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#94a3b8;"><i class="fas fa-image"></i></div>
                                 @endif
                             </td>
-                            <td><strong>{{ $item->title }}</strong></td>
+                            <td>
+                                <strong>{{ $item->title }}</strong>
+                                @if($item->names)
+                                    <div style="font-size: 11.5px; color: var(--gray); margin-top: 4px;"><i class="fas fa-user-friends" style="margin-right: 4px;"></i> {{ $item->names }}</div>
+                                @endif
+                            </td>
                             <td><span class="badge badge-primary">{{ $item->category }}</span></td>
                             <td><span class="badge badge-info">{{ $item->level ?? '—' }}</span></td>
                             <td><strong>{{ $item->year }}</strong></td>

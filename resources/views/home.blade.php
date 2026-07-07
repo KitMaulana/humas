@@ -238,6 +238,91 @@
     .grade-tab { padding: 8px 16px; font-size: 12px; }
     .kbm-title { font-size: 1.1rem; }
 }
+
+/* ── REKAP PRESTASI SECTION ──────────────────── */
+.rekap-section {
+    background-color: var(--white);
+    padding: 60px 0;
+    position: relative;
+    border-bottom: 1px solid #e2e8f0;
+}
+.rekap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+.rekap-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #e2e8f0;
+    padding: 30px 20px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.rekap-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-color: #cbd5e1;
+}
+.rekap-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+.rekap-card.siswa-kab .rekap-icon { background: #fef3c7; color: #d97706; }
+.rekap-card.siswa-int .rekap-icon { background: #dbeafe; color: #2563eb; }
+.rekap-card.guru .rekap-icon { background: #d1fae5; color: #059669; }
+.rekap-card.sekolah .rekap-icon { background: #f3e8ff; color: #7c3aed; }
+
+.rekap-number {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+.rekap-card.siswa-kab .rekap-number { color: #b45309; }
+.rekap-card.siswa-int .rekap-number { color: #1d4ed8; }
+.rekap-card.guru .rekap-number { color: #047857; }
+.rekap-card.sekolah .rekap-number { color: #6d28d9; }
+
+.rekap-text {
+    font-size: 0.95rem;
+    color: #475569;
+    font-weight: 600;
+}
+.btn-lihat-detail {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    text-shadow: none;
+}
+.btn-lihat-detail:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
+    color: white;
+}
 </style>
 @endsection
 
@@ -378,6 +463,50 @@
         @endif
     </div>
 </div>
+
+{{-- ══════ REKAPITULASI PRESTASI ══════ --}}
+<section class="rekap-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Rekapitulasi Prestasi</h2>
+            <p style="text-align: center; color: #64748b; margin-top: -35px; margin-bottom: 40px; font-weight: 500;">
+                Kilas balik perolehan prestasi civitas akademika sekolah
+            </p>
+        </div>
+
+        <div class="rekap-grid">
+            <div class="rekap-card siswa-kab">
+                <div class="rekap-icon"><i class="fas fa-award"></i></div>
+                <div class="rekap-number">{{ $countSiswaKabupaten }}</div>
+                <div class="rekap-text">Prestasi Siswa Tingkat Kabupaten</div>
+            </div>
+            
+            <div class="rekap-card siswa-int">
+                <div class="rekap-icon"><i class="fas fa-globe"></i></div>
+                <div class="rekap-number">{{ $countSiswaInternasional }}</div>
+                <div class="rekap-text">Prestasi Siswa Tingkat Internasional</div>
+            </div>
+            
+            <div class="rekap-card guru">
+                <div class="rekap-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                <div class="rekap-number">{{ $countGuru }}</div>
+                <div class="rekap-text">Prestasi Guru & Pendidik</div>
+            </div>
+            
+            <div class="rekap-card sekolah">
+                <div class="rekap-icon"><i class="fas fa-school"></i></div>
+                <div class="rekap-number">{{ $countSekolah }}</div>
+                <div class="rekap-text">Prestasi Institusi Sekolah</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 45px;">
+            <a href="{{ route('achievements') }}" class="btn-lihat-detail">
+                Klik di sini untuk melihat detail prestasi <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
 
 <div class="container">
     <div class="stats">

@@ -18,6 +18,10 @@
                     <label class="form-label">Judul Prestasi <span class="required">*</span></label>
                     <input type="text" name="title" class="form-control" value="{{ old('title', $item->title ?? '') }}" placeholder="Contoh: Juara 1 Olimpiade Fisika Nasional" required>
                 </div>
+                <div class="form-group full-width">
+                    <label class="form-label">Nama Penerima <span style="font-size:11px;color:#999;font-weight:normal;">(Bisa diinput lebih dari 1 orang, pisahkan dengan koma. Contoh: Andi, Budi)</span></label>
+                    <input type="text" name="names" class="form-control" value="{{ old('names', $item->names ?? '') }}" placeholder="Contoh: Andi Wibowo, Budi Santoso">
+                </div>
                 <div class="form-group">
                     <label class="form-label">Kategori <span class="required">*</span></label>
                     <select name="category" class="form-control" required>

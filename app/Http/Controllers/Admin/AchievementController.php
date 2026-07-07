@@ -24,6 +24,7 @@ class AchievementController extends Controller {
     public function store(Request $request) {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'names' => 'nullable|string',
             'category' => 'required|in:Siswa,Guru,Sekolah',
             'level' => 'nullable|string|max:100',
             'year' => 'required|integer|min:1900|max:' . date('Y'),
@@ -43,6 +44,7 @@ class AchievementController extends Controller {
     public function update(Request $request, Achievement $achievement) {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'names' => 'nullable|string',
             'category' => 'required|in:Siswa,Guru,Sekolah',
             'level' => 'nullable|string|max:100',
             'year' => 'required|integer|min:1900|max:' . date('Y'),
