@@ -82,11 +82,15 @@ class WebController extends Controller
         $countGuru = Achievement::where('category', 'Guru')->count();
         $countSekolah = Achievement::where('category', 'Sekolah')->count();
 
+        // Get alumni stats for home
+        $alumni = AlumniStat::orderBy('year', 'desc')->get();
+
         return view('home', compact(
             'profile', 'teacherCount', 'studentCount', 'achievementCount',
             'classCount', 'ongoingSchedules', 'timeSlots', 'currentDay',
             'currentTime', 'schedulesByGrade', 'lessonSetting',
-            'countSiswaKabupaten', 'countSiswaInternasional', 'countGuru', 'countSekolah'
+            'countSiswaKabupaten', 'countSiswaInternasional', 'countGuru', 'countSekolah',
+            'alumni'
         ));
     }
 

@@ -498,3 +498,12 @@ footer {
     background-color: #27ae60;
     transform: translateY(-2px);
 }
+.hero-btn.btn-alumni {
+    background-color: #D4A017;
+    color: white;
+    border: 2px solid rgba(255,255,255,0.1);
+}
+.hero-btn.btn-alumni:hover {
+    background-color: #b7840f;
+    transform: translateY(-2px);
+}
