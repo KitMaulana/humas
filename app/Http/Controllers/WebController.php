@@ -224,7 +224,8 @@ class WebController extends Controller
     public function alumni()
     {
         $alumni = AlumniStat::orderBy('year', 'desc')->get();
-        return view('alumni', compact('alumni'));
+        $partnerships = Partnership::all();
+        return view('alumni', compact('alumni', 'partnerships'));
     }
 
     private function processSchedules($schedules, $day, $lessonSetting)
