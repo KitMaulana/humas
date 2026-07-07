@@ -268,10 +268,10 @@
         <p style="font-weight: bold; color: white; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.6);">Dikelola oleh TIM HUMAS SMAN 1 CIRUAS</p>
         <p style="text-shadow: 0 2px 4px rgba(0,0,0,0.6);">{{ $profile->vision ?? 'Mewujudkan generasi yang bertaqwa, cerdas, terampil, dan berwawasan lingkungan.' }}</p>
         <div class="hero-buttons">
-            <a href="{{ route('schedule') }}" class="hero-btn btn-primary"><i class="fas fa-calendar-alt"></i> Cek Jadwal Pelajaran</a>
-            <a href="{{ route('statistics') }}" class="hero-btn btn-secondary"><i class="fas fa-chart-bar"></i> Statistik</a>
-            <a href="{{ route('achievements') }}" class="hero-btn btn-secondary"><i class="fas fa-trophy"></i> Prestasi</a>
-            <a href="{{ route('facilities') }}" class="hero-btn btn-secondary"><i class="fas fa-school"></i> Fasilitas</a>
+            <a href="{{ route('schedule') }}" class="hero-btn btn-jadwal"><i class="fas fa-calendar-alt"></i> Cek Jadwal Pelajaran</a>
+            <a href="{{ route('statistics') }}" class="hero-btn btn-statistik"><i class="fas fa-chart-bar"></i> Statistik</a>
+            <a href="{{ route('achievements') }}" class="hero-btn btn-prestasi"><i class="fas fa-trophy"></i> Prestasi</a>
+            <a href="{{ route('facilities') }}" class="hero-btn btn-fasilitas"><i class="fas fa-school"></i> Fasilitas</a>
         </div>
     </div>
 </section>

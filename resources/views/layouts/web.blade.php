@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'SMAN 1 Ciruas - Pusat Informasi')</title>
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}?v=1.3">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     @yield('styles')
@@ -27,7 +27,10 @@
 
                 <div class="real-time-clock" id="clock">
                     <i class="far fa-clock"></i>
-                    <span id="time-display">00:00:00</span>
+                    <div class="clock-content">
+                        <span id="date-display">—</span>
+                        <span id="time-display">00.00.00</span>
+                    </div>
                 </div>
             </nav>
         </div>
@@ -76,7 +79,8 @@
             const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             const dateString = now.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
             
-            document.getElementById('time-display').innerHTML = `${dateString} | ${timeString.replace(/:/g, '.')}`;
+            document.getElementById('date-display').textContent = dateString;
+            document.getElementById('time-display').textContent = timeString.replace(/:/g, '.');
         }
 
         setInterval(updateClock, 1000);
