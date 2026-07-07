@@ -1,5 +1,17 @@
 @extends('layouts.web')
 
+@php
+    if ($alumni->isEmpty()) {
+        $alumniList = collect([
+            (object)['year' => '2024', 'college_count' => 294, 'work_count' => 12, 'entrepreneur_count' => 6],
+            (object)['year' => '2023', 'college_count' => 278, 'work_count' => 15, 'entrepreneur_count' => 5],
+            (object)['year' => '2022', 'college_count' => 261, 'work_count' => 16, 'entrepreneur_count' => 8],
+        ]);
+    } else {
+        $alumniList = $alumni;
+    }
+@endphp
+
 @section('title', 'Profil Penyerapan Lulusan - SMAN 1 Ciruas')
 
 @section('styles')
@@ -187,17 +199,7 @@
             </p>
         </div>
 
-        @if($alumni->isEmpty())
-            @php
-                $alumniList = collect([
-                    (object)['year' => '2024', 'college_count' => 294, 'work_count' => 12, 'entrepreneur_count' => 6],
-                    (object)['year' => '2023', 'college_count' => 278, 'work_count' => 15, 'entrepreneur_count' => 5],
-                    (object)['year' => '2022', 'college_count' => 261, 'work_count' => 16, 'entrepreneur_count' => 8],
-                ]);
-            @endphp
-        @else
-            @php $alumniList = $alumni; @endphp
-        @endif
+        {{-- $alumniList has been defined at the top of the file --}}
 
         <div class="lulusan-year-tabs">
             @foreach($alumniList as $index => $a)
@@ -330,7 +332,7 @@ const uniData = {
   }
 };
 
-let activeYear = '{{ $alumniList->first()->year ?? "2024" }}';
+let activeYear = '{{ $alumniList->first()?->year ?? "2024" }}';
 
 function switchYear(year) {
   activeYear = year;
