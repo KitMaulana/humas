@@ -326,23 +326,25 @@
 
 /* ── PROFIL LULUSAN HOME SECTION ──────────────── */
 .home-lulusan-section {
-    background: linear-gradient(135deg, #1A3A5C 0%, #0F2440 100%);
-    color: white;
+    background: linear-gradient(135deg, #F8FAFC 0%, #EDF2F7 100%);
+    color: #2D3748;
     padding: 80px 0;
+    border-top: 1px solid #E2E8F0;
+    border-bottom: 1px solid #E2E8F0;
 }
 .home-lulusan-section .section-title h2 {
-    color: white;
+    color: #1A3A5C;
     font-family: 'Playfair Display', serif;
 }
 .home-lulusan-section .section-title p {
-    color: rgba(255,255,255,0.7);
+    color: #718096;
 }
 .home-lulusan-tabs {
     display: flex;
     gap: 0;
     justify-content: center;
     margin-bottom: 32px;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
+    border-bottom: 2px solid #E2E8F0;
     overflow-x: auto;
 }
 .home-lulusan-tab {
@@ -350,19 +352,19 @@
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
-    color: rgba(255,255,255,0.5);
+    color: #A0AEC0;
     border-bottom: 3px solid transparent;
-    margin-bottom: -1px;
+    margin-bottom: -2px;
     background: none;
     border: none;
     transition: all 0.2s ease;
 }
 .home-lulusan-tab.active {
-    color: #F0C040;
-    border-bottom-color: #D4A017;
+    color: #1A3A5C;
+    border-bottom-color: #1A3A5C;
 }
 .home-lulusan-tab:hover {
-    color: white;
+    color: #2D3748;
 }
 .home-lulusan-panel {
     display: none;
@@ -372,49 +374,52 @@
 }
 .home-lulusan-stats {
     display: flex;
-    gap: 32px;
+    gap: 24px;
     justify-content: center;
     flex-wrap: wrap;
     margin-bottom: 40px;
 }
 .home-lulusan-stat {
     text-align: center;
-    min-width: 150px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    min-width: 170px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
     border-radius: 12px;
-    padding: 20px;
+    padding: 24px 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
     transition: all 0.3s ease;
 }
 .home-lulusan-stat:hover {
-    background: rgba(212,160,23,0.06);
-    border-color: rgba(212,160,23,0.3);
-    transform: translateY(-2px);
+    background: #FFFFFF;
+    border-color: #3182CE;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.05);
 }
 .home-lulusan-stat strong {
     display: block;
     font-family: 'Playfair Display', serif;
     font-size: 2.8rem;
-    font-weight: 900;
-    color: #F0C040;
+    font-weight: 700;
+    color: #2B6CB0;
     line-height: 1.2;
 }
 .home-lulusan-stat small {
     font-size: 11px;
-    color: rgba(255,255,255,0.5);
+    color: #718096;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     margin-top: 8px;
     display: block;
+    font-weight: 600;
 }
 .btn-lihat-detail-alumni {
-    background-color: #D4A017;
-    color: #1A3A5C;
+    background-color: #3182CE;
+    color: #FFFFFF;
     padding: 12px 28px;
     border-radius: 30px;
     font-weight: bold;
     font-size: 0.95rem;
-    box-shadow: 0 4px 12px rgba(212, 160, 23, 0.3);
+    box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3);
     transition: all 0.3s ease;
     border: none;
     cursor: pointer;
@@ -424,10 +429,10 @@
     gap: 8px;
 }
 .btn-lihat-detail-alumni:hover {
-    background-color: #F0C040;
+    background-color: #2B6CB0;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(212, 160, 23, 0.4);
-    color: #1A3A5C;
+    box-shadow: 0 6px 16px rgba(49, 130, 206, 0.4);
+    color: #FFFFFF;
 }
 </style>
 @endsection
@@ -639,9 +644,9 @@
     <div class="container">
         
         <div class="section-title" style="text-align: center; margin-bottom: 56px;">
-            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.25em; color: #D4A017; text-transform: uppercase; display: block; margin-bottom: 12px;">Keberhasilan Alumni</span>
+            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.25em; color: #3182CE; text-transform: uppercase; display: block; margin-bottom: 12px;">Keberhasilan Alumni</span>
             <h2>Profil Penyerapan Lulusan</h2>
-            <div style="width: 48px; height: 3px; background: #D4A017; margin: 16px auto 0;"></div>
+            <div style="width: 48px; height: 3px; background: #3182CE; margin: 16px auto 0;"></div>
             <p style="margin-top: 16px; font-size: 15px; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.7;">
                 Lulusan SMAN 1 Ciruas tersebar di perguruan tinggi terbaik Indonesia. Data terus diperbarui setiap tahun ajaran.
             </p>

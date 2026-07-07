@@ -1,6 +1,13 @@
 @extends('layouts.admin')
 @section('page-title', 'Statistik Alumni')
 @section('content')
+@php
+    // Calculate totals across all items
+    $totalCollege = $items->sum('college_count');
+    $totalWork = $items->sum('work_count');
+    $totalEntrepreneur = $items->sum('entrepreneur_count');
+    $grandTotal = $totalCollege + $totalWork + $totalEntrepreneur;
+@endphp
 <div class="page-header">
     <div>
         <h1>Statistik Lulusan / Alumni</h1>
@@ -8,6 +15,38 @@
     </div>
     <a href="{{ route('admin.alumni-stats.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Tambah Data</a>
 </div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon" style="background: var(--info-light); color: var(--info);"><i class="fas fa-graduation-cap"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">{{ $totalCollege }}</div>
+            <div class="stat-label" style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Total Kuliah / PT</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: var(--success-light); color: var(--success);"><i class="fas fa-briefcase"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">{{ $totalWork }}</div>
+            <div class="stat-label" style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Total Kerja</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: var(--warning-light); color: var(--warning);"><i class="fas fa-lightbulb"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">{{ $totalEntrepreneur }}</div>
+            <div class="stat-label" style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Total Wirausaha</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: var(--primary-light); color: var(--primary);"><i class="fas fa-users"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">{{ $grandTotal }}</div>
+            <div class="stat-label" style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Total Lulusan</div>
+        </div>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-body">
         <div class="table-wrap">

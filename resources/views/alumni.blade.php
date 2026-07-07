@@ -19,9 +19,10 @@
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap');
 
     .lulusan-section {
-        background: linear-gradient(135deg, #1A3A5C 0%, #0F2440 100%);
-        color: white;
+        background: linear-gradient(135deg, #F8FAFC 0%, #EDF2F7 100%);
+        color: #2D3748;
         padding: 80px 0;
+        border-bottom: 1px solid #E2E8F0;
     }
     
     .lulusan-year-tabs {
@@ -29,7 +30,7 @@
         gap: 0;
         justify-content: center;
         margin-bottom: 32px;
-        border-bottom: 1px solid rgba(255,255,255,0.15);
+        border-bottom: 2px solid #E2E8F0;
         overflow-x: auto;
     }
     .lulusan-year-tab {
@@ -37,19 +38,19 @@
         cursor: pointer;
         font-size: 14px;
         font-weight: 600;
-        color: rgba(255,255,255,0.5);
+        color: #A0AEC0;
         border-bottom: 3px solid transparent;
-        margin-bottom: -1px;
+        margin-bottom: -2px;
         background: none;
         border: none;
         transition: all 0.2s ease;
     }
     .lulusan-year-tab.active {
-        color: #F0C040;
-        border-bottom-color: #D4A017;
+        color: #1A3A5C;
+        border-bottom-color: #1A3A5C;
     }
     .lulusan-year-tab:hover {
-        color: white;
+        color: #2D3748;
     }
 
     .lulusan-cards-wrap {
@@ -61,27 +62,42 @@
 
     .lulusan-stats {
         display: flex;
-        gap: 32px;
+        gap: 24px;
         justify-content: center;
         flex-wrap: wrap;
         margin-bottom: 40px;
     }
     .lulusan-stat {
         text-align: center;
-        min-width: 120px;
+        min-width: 170px;
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 24px 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        transition: all 0.3s ease;
+    }
+    .lulusan-stat:hover {
+        border-color: #3182CE;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px rgba(0,0,0,0.05);
     }
     .lulusan-stat strong {
         display: block;
         font-family: 'Playfair Display', serif;
-        font-size: 2.5rem;
-        font-weight: 900;
-        color: #F0C040;
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #2B6CB0;
+        line-height: 1.2;
     }
     .lulusan-stat small {
         font-size: 11px;
-        color: rgba(255,255,255,0.5);
+        color: #718096;
         letter-spacing: 0.05em;
         text-transform: uppercase;
+        margin-top: 8px;
+        display: block;
+        font-weight: 600;
     }
 
     .lulusan-filter {
@@ -97,19 +113,21 @@
         font-size: 13px;
         font-weight: 600;
         cursor: pointer;
-        border: 1.5px solid rgba(255,255,255,0.25);
-        color: rgba(255,255,255,0.7);
-        background: transparent;
+        border: 1.5px solid #E2E8F0;
+        color: #718096;
+        background: #FFFFFF;
         transition: all 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
     .lulusan-filter-btn.active {
-        background: #D4A017;
-        color: #1A3A5C;
-        border-color: #D4A017;
+        background: #3182CE;
+        color: #FFFFFF;
+        border-color: #3182CE;
+        box-shadow: 0 4px 10px rgba(49, 130, 206, 0.2);
     }
     .lulusan-filter-btn:hover:not(.active) {
-        border-color: #D4A017;
-        color: #D4A017;
+        border-color: #3182CE;
+        color: #3182CE;
     }
 
     .uni-grid {
@@ -118,32 +136,35 @@
         gap: 20px;
     }
     .uni-card {
-        background: rgba(255,255,255,0.06);
-        border: 1px solid rgba(255,255,255,0.1);
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
         border-radius: 12px;
         padding: 20px;
         display: flex;
         align-items: center;
         gap: 16px;
-        transition: background .2s, border-color .2s, transform 0.2s;
+        transition: all 0.3s ease;
         cursor: default;
         text-align: left;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.01);
     }
     .uni-card:hover {
-        background: rgba(212,160,23,0.08);
-        border-color: rgba(212,160,23,0.35);
+        background: #FFFFFF;
+        border-color: #3182CE;
         transform: translateY(-2px);
+        box-shadow: 0 10px 15px rgba(0,0,0,0.05);
     }
     .uni-icon {
         width: 48px;
         height: 48px;
         border-radius: 8px;
-        background: linear-gradient(135deg, #D4A017, #A07010);
+        background: linear-gradient(135deg, #3182CE, #2B6CB0);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 20px;
         flex-shrink: 0;
+        color: #FFFFFF;
     }
     .uni-info {
         flex: 1;
@@ -152,16 +173,16 @@
     .uni-nama {
         font-weight: 700;
         font-size: 14px;
-        color: white;
+        color: #2D3748;
         line-height: 1.3;
     }
     .uni-count {
         font-size: 12px;
-        color: rgba(255,255,255,0.5);
+        color: #718096;
         margin-top: 4px;
     }
     .uni-count span {
-        color: #F0C040;
+        color: #2B6CB0;
         font-weight: 700;
     }
 
@@ -170,11 +191,11 @@
         font-weight: 700;
         letter-spacing: 0.15em;
         text-transform: uppercase;
-        color: #F0C040;
+        color: #2B6CB0;
         margin-bottom: 16px;
         margin-top: 36px;
         padding-bottom: 8px;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
+        border-bottom: 1px solid #E2E8F0;
         text-align: left;
     }
 
@@ -191,10 +212,10 @@
     <div class="container">
         
         <div style="text-align: center; margin-bottom: 56px;">
-            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.25em; color: #D4A017; text-transform: uppercase; display: block; margin-bottom: 12px;">Keberhasilan Alumni</span>
-            <h1 style="font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: white;">Profil Penyerapan Lulusan</h1>
-            <div style="width: 48px; height: 3px; background: #D4A017; margin: 16px auto 0;"></div>
-            <p style="margin-top: 16px; color: rgba(255,255,255,0.7); font-size: 15px; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.7;">
+            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.25em; color: #3182CE; text-transform: uppercase; display: block; margin-bottom: 12px;">Keberhasilan Alumni</span>
+            <h1 style="font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: #1A3A5C;">Profil Penyerapan Lulusan</h1>
+            <div style="width: 48px; height: 3px; background: #3182CE; margin: 16px auto 0;"></div>
+            <p style="margin-top: 16px; color: #718096; font-size: 15px; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.7;">
                 Lulusan SMAN 1 Ciruas tersebar di perguruan tinggi terbaik Indonesia. Data terus diperbarui setiap tahun ajaran.
             </p>
         </div>
