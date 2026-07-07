@@ -6,6 +6,7 @@ use App\Models\Achievement;
 use App\Models\AlumniStat;
 use App\Models\Facility;
 use App\Models\SchoolClass;
+use App\Models\Partnership;
 use App\Models\SchoolProfile;
 use App\Models\Schedule;
 use App\Models\StudentStat;
