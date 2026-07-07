@@ -17,6 +17,7 @@
                     <img src="{{ asset('logo.png') }}" alt="Logo SMAN 1 Ciruas" onerror="this.src='https://via.placeholder.com/50x50?text=LOGO'">
                 </div>
 
+                @if(!request()->routeIs('home'))
                 <div class="nav-links">
                     <a href="{{ route('home') }}">Beranda</a>
                     <a href="{{ route('schedule') }}">Jadwal</a>
@@ -24,6 +25,7 @@
                     <a href="{{ route('achievements') }}">Prestasi</a>
                     <a href="{{ route('facilities') }}">Fasilitas</a>
                 </div>
+                @endif
 
                 <div class="real-time-clock" id="clock">
                     <i class="far fa-clock"></i>
