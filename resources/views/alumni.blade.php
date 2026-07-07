@@ -332,7 +332,7 @@ const uniData = {
   }
 };
 
-let activeYear = '{{ $alumniList->first()?->year ?? "2024" }}';
+let activeYear = '{{ ($firstAlumni = $alumniList->first()) ? ($firstAlumni->year ?? "2024") : "2024" }}';
 
 function switchYear(year) {
   activeYear = year;
