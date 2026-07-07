@@ -39,13 +39,21 @@ class WebController extends Controller
         $currentDay = $days[date('l')] ?? 'Senin';
         $currentTime = date('H:i:s');
 
-        // Ongoing schedules (currently running KBM)
-        $ongoingSchedules = Schedule::with(['schoolClass', 'teacher', 'subject'])
+        // Get all schedules for today
+        $allTodaySchedules = Schedule::with(['schoolClass', 'teacher', 'subject'])
             ->where('day', $currentDay)
-            ->where('start_time', '<=', $currentTime)
-            ->where('end_time', '>=', $currentTime)
-            ->orderBy('start_time')
             ->get();
+
+        // Process them (shifting logic & recess insertion)
+        $processedTodaySchedules = $this->processSchedules($allTodaySchedules, $currentDay, $lessonSetting);
+
+        // Filter currently running schedules (ongoing)
+        $currentMin = substr($currentTime, 0, 5);
+        $ongoingSchedules = collect($processedTodaySchedules)->filter(function($sch) use ($currentMin) {
+            $start = substr($sch->start_time, 0, 5);
+            $end = substr($sch->end_time, 0, 5);
+            return $start <= $currentMin && $end >= $currentMin;
+        });
 
         // Group ongoing schedules by grade X, XI, XII
         $schedulesByGrade = [
@@ -155,31 +163,39 @@ class WebController extends Controller
         $subjects = \App\Models\Subject::orderBy('name')->get();
         
         // Get ALL schedules with relationships for client-side filtering
-        $allSchedules = Schedule::with(['schoolClass', 'teacher', 'subject'])
-            ->orderBy('start_time')
-            ->get();
+        $allSchedules = Schedule::with(['schoolClass', 'teacher', 'subject'])->get();
+        
+        $lessonSetting = \App\Models\LessonSetting::current();
         
         // Transform to JSON-friendly format grouped by day
         $schedulesJson = [];
-        foreach ($allSchedules as $item) {
-            $day = $item->day;
-            if (!isset($schedulesJson[$day])) {
-                $schedulesJson[$day] = [];
+        $daysList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        
+        foreach ($daysList as $day) {
+            $daySchedules = $allSchedules->filter(function($sch) use ($day) {
+                return $sch->day === $day;
+            });
+            
+            $processed = $this->processSchedules($daySchedules, $day, $lessonSetting);
+            
+            $schedulesJson[$day] = [];
+            foreach ($processed as $item) {
+                $schedulesJson[$day][] = [
+                    'id' => $item->id,
+                    'lesson_number' => $item->lesson_number,
+                    'start_time' => substr($item->start_time, 0, 5),
+                    'end_time' => substr($item->end_time, 0, 5),
+                    'subject_name' => $item->subject->name ?? '—',
+                    'subject_id' => $item->subject_id,
+                    'teacher_name' => $item->teacher->name ?? '—',
+                    'teacher_id' => $item->teacher_id,
+                    'class_name' => $item->schoolClass->name ?? '—',
+                    'class_id' => $item->school_class_id,
+                    'class_grade' => $item->schoolClass->grade ?? '',
+                    'title' => $item->title,
+                    'is_break' => $item->is_break ?? false,
+                ];
             }
-            $schedulesJson[$day][] = [
-                'id' => $item->id,
-                'lesson_number' => $item->lesson_number,
-                'start_time' => substr($item->start_time, 0, 5),
-                'end_time' => substr($item->end_time, 0, 5),
-                'subject_name' => $item->subject->name ?? '—',
-                'subject_id' => $item->subject_id,
-                'teacher_name' => $item->teacher->name ?? '—',
-                'teacher_id' => $item->teacher_id,
-                'class_name' => $item->schoolClass->name ?? '—',
-                'class_id' => $item->school_class_id,
-                'class_grade' => $item->schoolClass->grade ?? '',
-                'title' => $item->title,
-            ];
         }
         
         return view('schedule', compact('classes', 'teachers', 'subjects', 'schedulesJson'));
@@ -201,5 +217,91 @@ class WebController extends Controller
     {
         $alumni = AlumniStat::orderBy('year', 'desc')->get();
         return view('alumni', compact('alumni'));
+    }
+
+    private function processSchedules($schedules, $day, $lessonSetting)
+    {
+        // 1. Separate into global and regular
+        $globalSchedules = $schedules->filter(function($sch) {
+            return is_null($sch->school_class_id);
+        });
+
+        $regularSchedules = $schedules->filter(function($sch) {
+            return !is_null($sch->school_class_id);
+        });
+
+        // Recalculate global schedules' times to match current settings
+        foreach ($globalSchedules as $sch) {
+            if ($sch->lesson_number) {
+                $slot = $lessonSetting->getSlotTime($sch->lesson_number);
+                if ($slot) {
+                    $sch->start_time = $slot['start'];
+                    $sch->end_time = $slot['end'];
+                }
+            }
+        }
+
+        // 2. Find global lesson numbers occupied on this day
+        $globalLessonNumbers = $globalSchedules->pluck('lesson_number')->unique()->toArray();
+
+        // 3. Generate JP mapping (original -> shifted)
+        $mapping = [];
+        $currentSlot = 1;
+        for ($x = 1; $x <= 15; $x++) {
+            while (in_array($currentSlot, $globalLessonNumbers)) {
+                $currentSlot++;
+            }
+            $mapping[$x] = $currentSlot;
+            $currentSlot++;
+        }
+
+        // 4. Shift regular schedules
+        foreach ($regularSchedules as $sch) {
+            $origJp = $sch->lesson_number;
+            if ($origJp && isset($mapping[$origJp])) {
+                $newJp = $mapping[$origJp];
+                $sch->lesson_number = $newJp;
+                $slot = $lessonSetting->getSlotTime($newJp);
+                if ($slot) {
+                    $sch->start_time = $slot['start'];
+                    $sch->end_time = $slot['end'];
+                }
+            }
+        }
+
+        // 5. Build recesses
+        $recesses = [];
+        $slots = $lessonSetting->getTimeSlots();
+
+        if ($lessonSetting->break_after_lesson && isset($slots[$lessonSetting->break_after_lesson]) && isset($slots[$lessonSetting->break_after_lesson + 1])) {
+            $recess = new Schedule();
+            $recess->id = 0;
+            $recess->lesson_number = null;
+            $recess->start_time = $slots[$lessonSetting->break_after_lesson]['end'];
+            $recess->end_time = $slots[$lessonSetting->break_after_lesson + 1]['start'];
+            $recess->title = 'Istirahat I';
+            $recess->is_break = true;
+            $recesses[] = $recess;
+        }
+
+        if ($lessonSetting->break2_after_lesson && isset($slots[$lessonSetting->break2_after_lesson]) && isset($slots[$lessonSetting->break2_after_lesson + 1])) {
+            $recess = new Schedule();
+            $recess->id = 0;
+            $recess->lesson_number = null;
+            $recess->start_time = $slots[$lessonSetting->break2_after_lesson]['end'];
+            $recess->end_time = $slots[$lessonSetting->break2_after_lesson + 1]['start'];
+            $recess->title = 'Istirahat II';
+            $recess->is_break = true;
+            $recesses[] = $recess;
+        }
+
+        // 6. Merge all
+        $all = collect()
+            ->concat($globalSchedules)
+            ->concat($regularSchedules)
+            ->concat($recesses);
+
+        // 7. Sort by start_time
+        return $all->sortBy('start_time')->values()->all();
     }
 }

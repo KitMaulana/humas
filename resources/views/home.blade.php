@@ -194,6 +194,19 @@
     background: #ef4444; border-radius: 50%;
     animation: pulse-dot-home 1.2s infinite;
 }
+.badge-break {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(46, 204, 113, 0.15) !important;
+    color: #2ecc71 !important;
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 700;
+    border: 1px solid rgba(46, 204, 113, 0.3) !important;
+}
+.badge-break::before {
+    content: ''; width: 6px; height: 6px;
+    background: #2ecc71 !important; border-radius: 50%;
+    animation: pulse-dot-home 1.2s infinite;
+}
 @keyframes pulse-dot-home {
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.5; transform: scale(1.3); }
@@ -254,8 +267,11 @@
         <h2 style="text-shadow: 0 2px 4px rgba(0,0,0,0.6);">Selamat Datang di Portal Informasi SMAN 1 Ciruas</h2>
         <p style="font-weight: bold; color: white; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.6);">Dikelola oleh TIM HUMAS SMAN 1 CIRUAS</p>
         <p style="text-shadow: 0 2px 4px rgba(0,0,0,0.6);">{{ $profile->vision ?? 'Mewujudkan generasi yang bertaqwa, cerdas, terampil, dan berwawasan lingkungan.' }}</p>
-        <div style="display: flex; justify-content: center; gap: 20px;">
-            <a href="{{ route('schedule') }}" style="background-color: var(--primary-orange); color: white; padding: 12px 25px; border-radius: 30px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.1);">Cek Jadwal Pelajaran</a>
+        <div class="hero-buttons">
+            <a href="{{ route('schedule') }}" class="hero-btn btn-primary"><i class="fas fa-calendar-alt"></i> Cek Jadwal Pelajaran</a>
+            <a href="{{ route('statistics') }}" class="hero-btn btn-secondary"><i class="fas fa-chart-bar"></i> Statistik</a>
+            <a href="{{ route('achievements') }}" class="hero-btn btn-secondary"><i class="fas fa-trophy"></i> Prestasi</a>
+            <a href="{{ route('facilities') }}" class="hero-btn btn-secondary"><i class="fas fa-school"></i> Fasilitas</a>
         </div>
     </div>
 </section>
@@ -311,12 +327,32 @@
                                 </thead>
                                 <tbody>
                                     @foreach($schedulesByGrade[$grade] as $sch)
-                                        <tr class="row-live" style="{{ $sch->title ? 'background: rgba(245, 158, 11, 0.08) !important;' : '' }}">
-                                            <td style="font-weight: 800; color: #fbbf24; white-space: nowrap;">JP {{ $sch->lesson_number ?? '—' }}</td>
+                                         @php
+                                             $rowStyle = '';
+                                             $textColor = '#fbbf24';
+                                             $icon = 'fa-bullhorn';
+                                             $badgeText = 'AGENDA BERSAMA';
+                                             $badgeClass = 'badge-live';
+                                             if ($sch->is_break) {
+                                                 $rowStyle = 'background: rgba(46, 204, 113, 0.08) !important;';
+                                                 $textColor = '#2ecc71';
+                                                 $icon = 'fa-coffee';
+                                                 $badgeText = 'ISTIRAHAT';
+                                                 $badgeClass = 'badge-break';
+                                             } elseif ($sch->title) {
+                                                 $rowStyle = 'background: rgba(245, 158, 11, 0.08) !important;';
+                                                 $textColor = '#fbbf24';
+                                                 $icon = 'fa-bullhorn';
+                                                 $badgeText = 'AGENDA BERSAMA';
+                                                 $badgeClass = 'badge-live';
+                                             }
+                                         @endphp
+                                        <tr class="row-live" style="{{ $rowStyle }}">
+                                            <td style="font-weight: 800; color: {{ $textColor }}; white-space: nowrap;">JP {{ $sch->lesson_number ?? '—' }}</td>
                                             <td class="td-time">{{ substr($sch->start_time, 0, 5) }}–{{ substr($sch->end_time, 0, 5) }}</td>
                                             @if($sch->title)
-                                                <td colspan="3" style="font-weight: bold; color: #fbbf24; text-align: left; padding-left: 20px;">
-                                                    <i class="fas fa-bullhorn" style="margin-right: 8px; color: #f59e0b;"></i> {{ $sch->title }} (Semua Kelas)
+                                                <td colspan="3" style="font-weight: bold; color: {{ $textColor }}; text-align: left; padding-left: 20px;">
+                                                    <i class="fas {{ $icon }}" style="margin-right: 8px; color: {{ $textColor }};"></i> {{ $sch->title }} (Semua Kelas)
                                                 </td>
                                             @else
                                                 <td class="td-mapel">{{ $sch->subject->name ?? '—' }}</td>
@@ -324,7 +360,7 @@
                                                 <td><span class="td-kelas">{{ $sch->schoolClass->name ?? '—' }}</span></td>
                                             @endif
                                             <td>
-                                                <span class="badge-live">{{ $sch->title ? 'AGENDA BERSAMA' : 'SEDANG BERLANGSUNG' }}</span>
+                                                <span class="{{ $badgeClass }}">{{ $badgeText }}</span>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -369,7 +405,7 @@
         <div class="section-title">
             <h2>Visi & Misi</h2>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        <div class="grid-2">
             <div style="background-color: var(--white); padding: 40px; border-radius: 15px; border-left: 5px solid var(--primary-blue);">
                 <h3 style="color: var(--primary-blue); margin-bottom: 15px;">Visi</h3>
                 <p style="font-style: italic; font-size: 1.1rem;">"{{ $profile->vision ?? 'Menjadi pusat keunggulan pendidikan yang membentuk insan cerdas, religius, dan berkarakter.' }}"</p>

@@ -138,7 +138,7 @@
         </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+    <div class="grid-2-1">
         <div class="card">
             <h3 style="margin-bottom: 20px; color: var(--primary-blue);">Perkembangan Jumlah Siswa</h3>
             <div class="chart-container">

@@ -17,10 +17,12 @@
     font-family: 'Inter', sans-serif;
 }
 
-body {
+html, body {
     background-color: var(--light-blue);
     color: var(--text-color);
     line-height: 1.6;
+    overflow-x: hidden;
+    width: 100%;
 }
 
 a {
@@ -279,8 +281,35 @@ footer {
 }
 
 @media (max-width: 768px) {
+    nav {
+        display: grid !important;
+        grid-template-areas: 
+            "logo clock"
+            "menu menu";
+        grid-template-columns: auto 1fr;
+        height: auto !important;
+        padding: 12px 0;
+        gap: 12px;
+    }
+    .logo-container {
+        grid-area: logo;
+    }
+    .real-time-clock {
+        grid-area: clock;
+        justify-self: end;
+        font-size: 0.8rem !important;
+        padding: 4px 10px !important;
+    }
     .nav-links {
-        display: none;
+        grid-area: menu;
+        display: flex !important;
+        justify-content: space-around;
+        width: 100%;
+        border-top: 1px solid #edf2f7;
+        padding-top: 10px;
+        gap: 10px;
+        overflow-x: auto;
+        white-space: nowrap;
     }
 }
 
@@ -371,4 +400,63 @@ footer {
 
 .ticker-item b {
     color: var(--primary-blue);
+}
+
+/* Responsive Grid Utilities */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+.grid-2-1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+@media (max-width: 768px) {
+    .grid-2, .grid-2-1 {
+        grid-template-columns: 1fr !important;
+        gap: 20px;
+    }
+}
+
+/* Hero Button Styling */
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    position: relative;
+    z-index: 10;
+}
+.hero-btn {
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.hero-btn.btn-primary {
+    background-color: var(--primary-orange);
+    color: white;
+    border: 2px solid rgba(255,255,255,0.1);
+}
+.hero-btn.btn-primary:hover {
+    background-color: #d35400;
+    transform: translateY(-2px);
+}
+.hero-btn.btn-secondary {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+}
+.hero-btn.btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
 }

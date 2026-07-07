@@ -66,7 +66,7 @@
         display: flex;
         gap: 0;
         white-space: nowrap;
-        animation: ticker-scroll 35s linear infinite;
+        animation: ticker-scroll 65s linear infinite;
     }
     .ticker-inner:hover { animation-play-state: paused; }
     .ticker-item {
@@ -539,12 +539,22 @@ function renderTable() {
         const jam = row.start_time + '–' + row.end_time;
 
         if (row.title) {
+            let icon = 'fa-bullhorn';
+            let color = 'var(--primary-orange, #D4A017)';
+            let bg = 'rgba(212, 160, 23, 0.06)';
+            
+            if (row.is_break) {
+                icon = 'fa-coffee';
+                color = '#2ecc71';
+                bg = 'rgba(46, 204, 113, 0.06)';
+            }
+            
             tbody.innerHTML += `
-                <tr class="${trClass}" style="background: rgba(212, 160, 23, 0.06);">
-                    <td style="font-weight: 700; color: var(--primary-orange, #D4A017);">JP ${row.lesson_number || '—'}</td>
+                <tr class="${trClass}" style="background: ${bg};">
+                    <td style="font-weight: 700; color: ${color};">JP ${row.lesson_number || '—'}</td>
                     <td class="td-time">${jam}</td>
-                    <td colspan="3" class="td-mapel" style="font-weight: bold; text-align: left; padding-left: 20px; color: var(--primary-orange, #D4A017);">
-                        <i class="fas fa-bullhorn" style="margin-right: 8px;"></i> ${row.title} (Semua Kelas)
+                    <td colspan="3" class="td-mapel" style="font-weight: bold; text-align: left; padding-left: 20px; color: ${color};">
+                        <i class="fas ${icon}" style="margin-right: 8px;"></i> ${row.title} (Semua Kelas)
                     </td>
                     <td>${statusBadge(status)}</td>
                 </tr>`;
@@ -611,8 +621,14 @@ function buildTicker() {
     let segments = [];
     liveItems.forEach(r => {
         if (r.title) {
+            let icon = 'fa-bullhorn';
+            let colorStyle = 'color: #F0C040;';
+            if (r.is_break) {
+                icon = 'fa-coffee';
+                colorStyle = 'color: #2ecc71;';
+            }
             segments.push(`<span class="ticker-item">
-                <span class="t-mapel" style="color: #F0C040;"><i class="fas fa-bullhorn"></i> ${r.title}</span>
+                <span class="t-mapel" style="${colorStyle}"><i class="fas ${icon}"></i> ${r.title}</span>
                 <span class="ticker-sep">•</span>
                 <span class="t-kelas">Semua Kelas</span>
                 <span class="ticker-sep">•</span>
@@ -634,8 +650,14 @@ function buildTicker() {
     if (upcomingItems.length > 0) {
         const u = upcomingItems[0];
         if (u.title) {
+            let icon = 'fa-bullhorn';
+            let colorStyle = 'color: #F0C040;';
+            if (u.is_break) {
+                icon = 'fa-coffee';
+                colorStyle = 'color: #2ecc71;';
+            }
             segments.push(`<span class="ticker-item" style="opacity:.75">
-                ⏭ Berikutnya: <span class="t-mapel" style="color: #F0C040;"><i class="fas fa-bullhorn"></i> ${u.title}</span>
+                ⏭ Berikutnya: <span class="t-mapel" style="${colorStyle}"><i class="fas ${icon}"></i> ${u.title}</span>
                 <span class="ticker-sep">•</span><span class="t-kelas">Semua Kelas</span>
                 <span class="ticker-sep">•</span><span class="t-jam">${u.start_time}–${u.end_time}</span>
             </span>`);

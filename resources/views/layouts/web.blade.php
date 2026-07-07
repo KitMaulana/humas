@@ -15,10 +15,6 @@
             <nav>
                 <div class="logo-container">
                     <img src="{{ asset('logo.png') }}" alt="Logo SMAN 1 Ciruas" onerror="this.src='https://via.placeholder.com/50x50?text=LOGO'">
-                    <div class="logo-text">
-                        <h1>SMAN 1 CIRUAS</h1>
-                        <p>Kabupaten Serang, Banten</p>
-                    </div>
                 </div>
 
                 <div class="nav-links">
@@ -77,20 +73,10 @@
     <script>
         function updateClock() {
             const now = new Date();
-            const options = {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            };
             const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const dateString = now.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
+            const dateString = now.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
             
-            document.getElementById('time-display').innerHTML = `${dateString} | ${timeString}`;
+            document.getElementById('time-display').innerHTML = `${dateString} | ${timeString.replace(/:/g, '.')}`;
         }
 
         setInterval(updateClock, 1000);

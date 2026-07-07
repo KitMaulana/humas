@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\OrganizationStructureController;
 use App\Http\Controllers\Admin\PartnershipController;
 use App\Http\Controllers\Admin\SchoolProfileController;
 use App\Http\Controllers\Admin\LessonSettingController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 // ── Public Routes ─────────────────────────────────
@@ -54,6 +55,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('school-classes/import', [SchoolClassController::class, 'importCsv'])->name('school-classes.import.process');
 
         // Data Akademik
+        Route::resource('users', UserController::class);
         Route::resource('school-classes', SchoolClassController::class);
         Route::resource('teachers', TeacherController::class);
         Route::resource('staff', StaffController::class);

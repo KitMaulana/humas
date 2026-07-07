@@ -68,6 +68,9 @@
                 <a href="{{ route('admin.schedules.index') }}" class="sidebar-link {{ request()->routeIs('admin.schedules.*') ? 'active' : '' }}">
                     <i class="fas fa-calendar-alt"></i> Jadwal Pelajaran
                 </a>
+                <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                    <i class="fas fa-user-shield"></i> Kelola Admin
+                </a>
                 <a href="{{ route('admin.lesson-settings.edit') }}" class="sidebar-link {{ request()->routeIs('admin.lesson-settings.*') || request()->routeIs('admin.school-profile.*') ? 'active' : '' }}">
                     <i class="fas fa-cog"></i> Pengaturan
                 </a>
