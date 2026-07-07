@@ -464,12 +464,30 @@
     </div>
 </div>
 
+{{-- ══════ STATS CARDS ══════ --}}
+<div class="container" style="margin-top: 50px; margin-bottom: 20px;">
+    <div class="stats">
+        <div class="stat-card">
+            <h3 id="student-count">{{ $studentCount }}</h3>
+            <p>Total Siswa</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="teacher-count">{{ $teacherCount }}</h3>
+            <p>Guru & Staf</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="class-count">{{ $classCount }}</h3>
+            <p>Rombongan Belajar</p>
+        </div>
+    </div>
+</div>
+
 {{-- ══════ REKAPITULASI PRESTASI ══════ --}}
 <section class="rekap-section">
     <div class="container">
         <div class="section-title">
             <h2>Rekapitulasi Prestasi</h2>
-            <p style="text-align: center; color: #64748b; margin-top: -35px; margin-bottom: 40px; font-weight: 500;">
+            <p style="text-align: center; color: #64748b; margin-top: 20px; margin-bottom: 40px; font-weight: 500;">
                 Kilas balik perolehan prestasi civitas akademika sekolah
             </p>
         </div>
@@ -508,26 +526,6 @@
     </div>
 </section>
 
-<div class="container">
-    <div class="stats">
-        <div class="stat-card">
-            <h3 id="student-count">{{ $studentCount }}</h3>
-            <p>Total Siswa</p>
-        </div>
-        <div class="stat-card">
-            <h3 id="teacher-count">{{ $teacherCount }}</h3>
-            <p>Guru & Staf</p>
-        </div>
-        <div class="stat-card">
-            <h3 id="class-count">{{ $classCount }}</h3>
-            <p>Rombongan Belajar</p>
-        </div>
-        <div class="stat-card">
-            <h3 id="achievement-count">{{ $achievementCount }}</h3>
-            <p>Prestasi Tercatat</p>
-        </div>
-    </div>
-</div>
 
 <section style="background-color: var(--light-blue);">
     <div class="container">
