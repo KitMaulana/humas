@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\AchievementController;
 use App\Http\Controllers\Admin\AlumniStatController;
+use App\Http\Controllers\Admin\AlumniUniversityController;
 use App\Http\Controllers\Admin\StudentStatController;
 use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Admin\OrganizationStructureController;
@@ -65,6 +66,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Data & Statistik
         Route::resource('achievements', AchievementController::class);
+        Route::get('alumni-universities/import', [AlumniUniversityController::class, 'showImport'])->name('alumni-universities.import');
+        Route::post('alumni-universities/import', [AlumniUniversityController::class, 'importCsv'])->name('alumni-universities.import.process');
+        Route::get('alumni-universities/template', [AlumniUniversityController::class, 'downloadTemplate'])->name('alumni-universities.template');
+        Route::resource('alumni-universities', AlumniUniversityController::class);
         Route::resource('alumni-stats', AlumniStatController::class);
         Route::resource('student-stats', StudentStatController::class);
 

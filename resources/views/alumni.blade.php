@@ -233,12 +233,18 @@
                 $total = $a->college_count + $a->work_count + $a->entrepreneur_count;
                 $rate = $total > 0 ? number_format(($a->college_count / $total) * 100, 1) : 0;
                 
-                $uniCountMap = [
-                    '2024' => 47,
-                    '2023' => 43,
-                    '2022' => 39,
-                ];
-                $uniCount = $uniCountMap[$a->year] ?? 35;
+                // Get unique universities count dynamically from database, fallback if empty
+                $dbUniCount = $universities->where('year', $a->year)->count();
+                if ($dbUniCount > 0) {
+                    $uniCount = $dbUniCount;
+                } else {
+                    $uniCountMap = [
+                        '2024' => 47,
+                        '2023' => 43,
+                        '2022' => 39,
+                    ];
+                    $uniCount = $uniCountMap[$a->year] ?? 35;
+                }
             @endphp
             <div class="lulusan-cards-wrap {{ $index === 0 ? 'active' : '' }}" id="lulusan-{{ $a->year }}">
                 <div class="lulusan-stats">
@@ -292,7 +298,32 @@
 
 @section('scripts')
 <script>
-const uniData = {
+@php
+    $groupedUniversities = [];
+    foreach ($universities as $uni) {
+        $year = $uni->year;
+        // Map category names to Javascript keys: ptn -> ptN, ptn-lokal -> ptn-lokal, pts -> ptS
+        $jsKey = $uni->category;
+        if ($jsKey === 'ptn') $jsKey = 'ptN';
+        elseif ($jsKey === 'pts') $jsKey = 'ptS';
+        
+        if (!isset($groupedUniversities[$year])) {
+            $groupedUniversities[$year] = [
+                'ptN' => [],
+                'ptn-lokal' => [],
+                'ptS' => []
+            ];
+        }
+        $groupedUniversities[$year][$jsKey][] = [
+            'nama' => $uni->name,
+            'icon' => $uni->icon ?: '🏫',
+            'count' => $uni->count
+        ];
+    }
+@endphp
+
+const dbUniData = @json($groupedUniversities);
+const staticUniData = {
   '2024': {
     ptN: [
       { nama: 'Universitas Indonesia', icon: '🏛️', count: 28 },
@@ -352,6 +383,8 @@ const uniData = {
     ]
   }
 };
+
+const uniData = Object.keys(dbUniData).length > 0 ? dbUniData : staticUniData;
 
 let activeYear = '{{ ($firstAlumni = $alumniList->first()) ? ($firstAlumni->year ?? "2024") : "2024" }}';
 

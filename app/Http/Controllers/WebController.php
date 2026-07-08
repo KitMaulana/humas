@@ -11,6 +11,7 @@ use App\Models\SchoolProfile;
 use App\Models\Schedule;
 use App\Models\StudentStat;
 use App\Models\Teacher;
+use App\Models\AlumniUniversity;
 use Illuminate\Http\Request;
 
 class WebController extends Controller
@@ -84,13 +85,14 @@ class WebController extends Controller
 
         // Get alumni stats for home
         $alumni = AlumniStat::orderBy('year', 'desc')->get();
+        $universities = AlumniUniversity::all();
 
         return view('home', compact(
             'profile', 'teacherCount', 'studentCount', 'achievementCount',
             'classCount', 'ongoingSchedules', 'timeSlots', 'currentDay',
             'currentTime', 'schedulesByGrade', 'lessonSetting',
             'countSiswaKabupaten', 'countSiswaInternasional', 'countGuru', 'countSekolah',
-            'alumni'
+            'alumni', 'universities'
         ));
     }
 
@@ -229,7 +231,8 @@ class WebController extends Controller
     {
         $alumni = AlumniStat::orderBy('year', 'desc')->get();
         $partnerships = Partnership::all();
-        return view('alumni', compact('alumni', 'partnerships'));
+        $universities = AlumniUniversity::orderBy('count', 'desc')->get();
+        return view('alumni', compact('alumni', 'partnerships', 'universities'));
     }
 
     private function processSchedules($schedules, $day, $lessonSetting)

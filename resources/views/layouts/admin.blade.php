@@ -37,6 +37,9 @@
                 <a href="{{ route('admin.alumni-stats.index') }}" class="sidebar-link {{ request()->routeIs('admin.alumni-stats.*') ? 'active' : '' }}">
                     <i class="fas fa-chart-line"></i> Statistik Alumni
                 </a>
+                <a href="{{ route('admin.alumni-universities.index') }}" class="sidebar-link {{ request()->routeIs('admin.alumni-universities.*') ? 'active' : '' }}">
+                    <i class="fas fa-university"></i> Detail Kampus Alumni
+                </a>
                 <a href="{{ route('admin.student-stats.index') }}" class="sidebar-link {{ request()->routeIs('admin.student-stats.*') ? 'active' : '' }}">
                     <i class="fas fa-chart-bar"></i> Statistik Siswa
                 </a>
