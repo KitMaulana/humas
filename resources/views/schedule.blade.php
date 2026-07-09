@@ -673,7 +673,16 @@ function buildTicker() {
 
     const content = segments.join('<span class="ticker-sep" style="padding:0 20px;color:rgba(255,255,255,0.2)">⬥</span>');
     ticker.innerHTML = content + '<span style="padding:0 40px"></span>' + content;
-    ticker.style.animation = '';
+    
+    // Dynamically calculate animation duration for a consistent, readable scroll speed (approx. 45px per second)
+    const speed = 45; // Pixels per second
+    const contentWidth = ticker.scrollWidth / 2;
+    if (contentWidth > 0) {
+        const duration = contentWidth / speed;
+        ticker.style.animation = `ticker-scroll ${duration}s linear infinite`;
+    } else {
+        ticker.style.animation = '';
+    }
 }
 
 /* ══════════════════════════════════════════════════
