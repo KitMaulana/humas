@@ -528,7 +528,7 @@
                                              $rowStyle = '';
                                              $textColor = '#fbbf24';
                                              $icon = 'fa-bullhorn';
-                                             $badgeText = 'AGENDA BERSAMA';
+                                             $badgeText = 'SEDANG BERLANGSUNG';
                                              $badgeClass = 'badge-live';
                                              if ($sch->is_break) {
                                                  $rowStyle = 'background: rgba(46, 204, 113, 0.08) !important;';
