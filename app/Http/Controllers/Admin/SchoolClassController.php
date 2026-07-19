@@ -13,8 +13,25 @@ class SchoolClassController extends Controller {
         if ($request->filled('grade')) {
             $query->where('grade', $request->grade);
         }
-        $items = $query->orderByRaw("FIELD(grade, 'X', 'XI', 'XII')")->orderBy('name')->paginate(15)->withQueryString();
+
+        $perPage = $request->get('per_page', 15);
+        if ($perPage === 'all' || $perPage === 'semua') {
+            $paginateCount = 999999;
+        } else {
+            $paginateCount = in_array($perPage, [10, 20, 50, 100]) ? (int)$perPage : 15;
+        }
+
+        $items = $query->orderByRaw("FIELD(grade, 'X', 'XI', 'XII')")->orderBy('name')->paginate($paginateCount)->withQueryString();
         return view('admin.school-classes.index', compact('items'));
+    }
+
+    public function bulkDestroy(Request $request) {
+        $ids = $request->input('ids', []);
+        if (count($ids) > 0) {
+            SchoolClass::whereIn('id', $ids)->delete();
+            return redirect()->route('admin.school-classes.index')->with('success', count($ids) . ' data kelas berhasil dihapus secara massal.');
+        }
+        return redirect()->route('admin.school-classes.index')->with('error', 'Tidak ada data kelas yang dipilih.');
     }
     public function create() {
         return view('admin.school-classes.form');
