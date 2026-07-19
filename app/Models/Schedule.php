@@ -30,7 +30,7 @@ class Schedule extends Model
     {
         if ($this->lesson_number) {
             $settings = LessonSetting::current();
-            $slot = $settings->getSlotTime($this->lesson_number);
+            $slot = $settings->getSlotTime($this->lesson_number, $this->day);
             if ($slot) {
                 $this->start_time = $slot['start'];
                 $this->end_time = $slot['end'];

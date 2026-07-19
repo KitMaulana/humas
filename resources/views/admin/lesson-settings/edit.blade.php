@@ -22,6 +22,12 @@
     <div class="card">
         <div class="card-header"><h3><i class="fas fa-cog"></i> Konfigurasi</h3></div>
         <div class="card-body">
+            <div style="background: rgba(59,130,246,0.1); border-left: 4px solid #3b82f6; padding: 12px; border-radius: 4px; margin-bottom: 20px;">
+                <h4 style="color:#1e3a8a; margin: 0 0 6px 0; font-size: 13px;"><i class="fas fa-info-circle"></i> Info Jadwal Fleksibel Harian</h4>
+                <p style="color:#1e40af; margin: 0; font-size: 12px; line-height: 1.5;">
+                    Sistem saat ini menggunakan konfigurasi jam pelajaran khusus per hari (Senin, Selasa-Kamis, Jumat) secara otomatis guna mengakomodasi perbedaan durasi KBM dan kegiatan seperti Upacara & Kajian Islami secara presisi sesuai jadwal resmi terbaru.
+                </p>
+            </div>
             <form action="{{ route('admin.lesson-settings.update') }}" method="POST">
                 @csrf @method('PUT')
                 <div class="form-grid">
@@ -81,39 +87,158 @@
 
     {{-- PREVIEW --}}
     <div class="card">
-        <div class="card-header"><h3><i class="fas fa-clock"></i> Preview Jam Pelajaran</h3></div>
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <h3><i class="fas fa-clock"></i> Preview Jam Pelajaran</h3>
+            <div style="display: flex; gap: 4px;">
+                <button type="button" class="btn btn-sm btn-primary day-tab-btn" data-day="senin" onclick="switchDayTab('senin')">Senin</button>
+                <button type="button" class="btn btn-sm btn-outline day-tab-btn" data-day="selasa" onclick="switchDayTab('selasa')">Selasa-Kamis</button>
+                <button type="button" class="btn btn-sm btn-outline day-tab-btn" data-day="jumat" onclick="switchDayTab('jumat')">Jumat</button>
+            </div>
+        </div>
         <div class="card-body">
-            <div class="table-wrap">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>JP Ke-</th>
-                            <th>Jam Mulai</th>
-                            <th>Jam Selesai</th>
-                            <th>Keterangan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($timeSlots as $slot)
+            <!-- TAB SENIN -->
+            <div id="tab-senin" class="day-tab-content">
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
                             <tr>
-                                <td><strong>{{ $slot['number'] }}</strong></td>
-                                <td>{{ $slot['start'] }}</td>
-                                <td>{{ $slot['end'] }}</td>
-                                <td>
-                                    @if($setting->break_after_lesson == $slot['number'])
-                                        <span class="badge badge-warning"><i class="fas fa-coffee"></i> Istirahat setelah ini ({{ $setting->break_duration }} menit)</span>
-                                    @elseif($setting->break2_after_lesson && $setting->break2_after_lesson == $slot['number'])
-                                        <span class="badge badge-warning"><i class="fas fa-coffee"></i> Istirahat ke-2 ({{ $setting->break2_duration }} menit)</span>
-                                    @else
-                                        <span style="color:#94a3b8;">—</span>
-                                    @endif
-                                </td>
+                                <th>JP / Kegiatan</th>
+                                <th>Mulai</th>
+                                <th>Selesai</th>
+                                <th>Keterangan</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <tr style="background: rgba(59,130,246,0.05);">
+                                <td><span class="badge badge-info">Kegiatan</span></td>
+                                <td><strong>07:00</strong></td>
+                                <td><strong>08:10</strong></td>
+                                <td style="color:#1e3a8a; font-weight: 500;">UPACARA BENDERA / PEMBIASAAN</td>
+                            </tr>
+                            @foreach($setting->getTimeSlotsForDay('Senin') as $slot)
+                                <tr>
+                                    <td><strong>JP {{ $slot['number'] }}</strong></td>
+                                    <td>{{ $slot['start'] }}</td>
+                                    <td>{{ $slot['end'] }}</td>
+                                    <td>
+                                        @if($slot['number'] == 3)
+                                            <span class="badge badge-warning" style="font-weight: 400;"><i class="fas fa-utensils"></i> Makan Bergizi Gratis (09:55 - 10:35)</span>
+                                        @elseif($slot['number'] == 5)
+                                            <span class="badge badge-warning" style="font-weight: 400;"><i class="fas fa-mosque"></i> Sholat Dhuhur & Istirahat (11:45 - 13:00)</span>
+                                        @else
+                                            <span style="color:#94a3b8;">—</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB SELASA-KAMIS -->
+            <div id="tab-selasa" class="day-tab-content" style="display:none;">
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>JP / Kegiatan</th>
+                                <th>Mulai</th>
+                                <th>Selesai</th>
+                                <th>Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($setting->getTimeSlotsForDay('Selasa') as $slot)
+                                <tr>
+                                    <td><strong>JP {{ $slot['number'] }}</strong></td>
+                                    <td>{{ $slot['start'] }}</td>
+                                    <td>{{ $slot['end'] }}</td>
+                                    <td>
+                                        @if($slot['number'] == 5)
+                                            <span class="badge badge-warning" style="font-weight: 400;"><i class="fas fa-utensils"></i> Makan Bergizi Gratis (09:55 - 10:35)</span>
+                                        @elseif($slot['number'] == 7)
+                                            <span class="badge badge-warning" style="font-weight: 400;"><i class="fas fa-mosque"></i> Sholat Dhuhur & Istirahat (11:45 - 13:00)</span>
+                                        @else
+                                            <span style="color:#94a3b8;">—</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB JUMAT -->
+            <div id="tab-jumat" class="day-tab-content" style="display:none;">
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>JP / Kegiatan</th>
+                                <th>Mulai</th>
+                                <th>Selesai</th>
+                                <th>Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: rgba(59,130,246,0.05);">
+                                <td><span class="badge badge-info">Kegiatan</span></td>
+                                <td><strong>07:00</strong></td>
+                                <td><strong>08:20</strong></td>
+                                <td style="color:#1e3a8a; font-weight: 500;">PEMBIASAAN / KAJIAN ISLAMI</td>
+                            </tr>
+                            @foreach($setting->getTimeSlotsForDay('Jumat') as $slot)
+                                <tr>
+                                    <td><strong>JP {{ $slot['number'] }}</strong></td>
+                                    <td>{{ $slot['start'] }}</td>
+                                    <td>{{ $slot['end'] }}</td>
+                                    <td>
+                                        @if($slot['number'] == 2)
+                                            <span class="badge badge-warning" style="font-weight: 400;"><i class="fas fa-utensils"></i> Makan Bergizi Gratis (09:40 - 10:20)</span>
+                                        @elseif($slot['number'] == 4)
+                                            <span class="badge badge-warning" style="font-weight: 400;"><i class="fas fa-mosque"></i> Sholat Jumat (11:55 - 13:00)</span>
+                                        @else
+                                            <span style="color:#94a3b8;">—</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                            <tr style="background: rgba(245,158,11,0.05);">
+                                <td><span class="badge badge-warning">Kegiatan</span></td>
+                                <td><strong>13:00</strong></td>
+                                <td><strong>16:00</strong></td>
+                                <td style="color:#b45309; font-weight: 500;">EKSTRAKURIKULER</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+@section('scripts')
+<script>
+window.switchDayTab = function(day) {
+    // Hide all tab contents
+    document.querySelectorAll('.day-tab-content').forEach(el => el.style.display = 'none');
+    
+    // Show target tab content
+    document.getElementById('tab-' + day).style.display = 'block';
+    
+    // Update button styles
+    document.querySelectorAll('.day-tab-btn').forEach(btn => {
+        if (btn.getAttribute('data-day') === day) {
+            btn.classList.remove('btn-outline');
+            btn.classList.add('btn-primary');
+        } else {
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-outline');
+        }
+    });
+}
+</script>
+@endsection
 @endsection

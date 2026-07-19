@@ -15,8 +15,31 @@ class TeacherController extends Controller {
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-        $items = $query->orderBy('name')->paginate(15)->withQueryString();
+
+        $perPage = $request->get('per_page', 15);
+        if ($perPage === 'all' || $perPage === 'semua') {
+            $paginateCount = 999999;
+        } else {
+            $paginateCount = in_array($perPage, [10, 20, 50, 100]) ? (int)$perPage : 15;
+        }
+
+        $items = $query->orderBy('name')->paginate($paginateCount)->withQueryString();
         return view('admin.teachers.index', compact('items'));
+    }
+
+    public function bulkDestroy(Request $request) {
+        $ids = $request->input('ids', []);
+        if (count($ids) > 0) {
+            $teachers = Teacher::whereIn('id', $ids)->get();
+            foreach ($teachers as $teacher) {
+                if ($teacher->photo_path) {
+                    Storage::disk('public')->delete($teacher->photo_path);
+                }
+                $teacher->delete();
+            }
+            return redirect()->route('admin.teachers.index')->with('success', count($ids) . ' data guru berhasil dihapus secara massal.');
+        }
+        return redirect()->route('admin.teachers.index')->with('error', 'Tidak ada data guru yang dipilih.');
     }
     public function create() {
         return view('admin.teachers.form');

@@ -58,6 +58,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Data Akademik
         Route::resource('users', UserController::class);
         Route::resource('school-classes', SchoolClassController::class);
+        Route::post('teachers/bulk-delete', [TeacherController::class, 'bulkDestroy'])->name('teachers.bulk-delete');
         Route::resource('teachers', TeacherController::class);
         Route::resource('staff', StaffController::class);
         Route::resource('subjects', SubjectController::class);

@@ -237,7 +237,63 @@ class WebController extends Controller
 
     private function processSchedules($schedules, $day, $lessonSetting)
     {
-        // 1. Separate into global and regular
+        $dayLower = trim(strtolower($day));
+        $isCustomDay = in_array($dayLower, ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu']);
+
+        if ($isCustomDay) {
+            // 1. Separate into global and regular
+            $globalSchedules = $schedules->filter(function($sch) {
+                if (!is_null($sch->school_class_id)) return false;
+                
+                // Skip standard recesses that are now dynamically generated to prevent duplicates
+                $title = strtolower(trim($sch->title));
+                if (str_contains($title, 'upacara') || 
+                    str_contains($title, 'makan bergizi') || 
+                    str_contains($title, 'mbg') || 
+                    str_contains($title, 'sholat') || 
+                    str_contains($title, 'kajian') || 
+                    str_contains($title, 'pembiasaan') || 
+                    str_contains($title, 'ekstrakurikuler') || 
+                    str_contains($title, 'istirahat')) {
+                    return false;
+                }
+                return true;
+            });
+
+            $regularSchedules = $schedules->filter(function($sch) {
+                return !is_null($sch->school_class_id);
+            });
+
+            // Map times based on daily slots
+            $slots = $lessonSetting->getTimeSlotsForDay($day);
+
+            foreach ($regularSchedules as $sch) {
+                if ($sch->lesson_number && isset($slots[$sch->lesson_number])) {
+                    $sch->start_time = $slots[$sch->lesson_number]['start'];
+                    $sch->end_time = $slots[$sch->lesson_number]['end'];
+                }
+            }
+
+            foreach ($globalSchedules as $sch) {
+                if ($sch->lesson_number && isset($slots[$sch->lesson_number])) {
+                    $sch->start_time = $slots[$sch->lesson_number]['start'];
+                    $sch->end_time = $slots[$sch->lesson_number]['end'];
+                }
+            }
+
+            // Get standard recesses dynamically
+            $recesses = $lessonSetting->getRecessesForDay($day);
+
+            // Merge all
+            $all = collect()
+                ->concat($globalSchedules)
+                ->concat($regularSchedules)
+                ->concat($recesses);
+
+            return $all->sortBy('start_time')->values()->all();
+        }
+
+        // Fallback to original logic for Saturday / Sunday
         $globalSchedules = $schedules->filter(function($sch) {
             return is_null($sch->school_class_id);
         });
@@ -246,7 +302,6 @@ class WebController extends Controller
             return !is_null($sch->school_class_id);
         });
 
-        // Recalculate global schedules' times to match current settings
         foreach ($globalSchedules as $sch) {
             if ($sch->lesson_number) {
                 $slot = $lessonSetting->getSlotTime($sch->lesson_number);
@@ -257,10 +312,8 @@ class WebController extends Controller
             }
         }
 
-        // 2. Find global lesson numbers occupied on this day
         $globalLessonNumbers = $globalSchedules->pluck('lesson_number')->unique()->toArray();
 
-        // 3. Generate JP mapping (original -> shifted)
         $mapping = [];
         $currentSlot = 1;
         for ($x = 1; $x <= 15; $x++) {
@@ -271,7 +324,6 @@ class WebController extends Controller
             $currentSlot++;
         }
 
-        // 4. Shift regular schedules
         foreach ($regularSchedules as $sch) {
             $origJp = $sch->lesson_number;
             if ($origJp && isset($mapping[$origJp])) {
@@ -285,7 +337,6 @@ class WebController extends Controller
             }
         }
 
-        // 5. Build recesses
         $recesses = [];
         $slots = $lessonSetting->getTimeSlots();
 
@@ -311,13 +362,11 @@ class WebController extends Controller
             $recesses[] = $recess;
         }
 
-        // 6. Merge all
         $all = collect()
             ->concat($globalSchedules)
             ->concat($regularSchedules)
             ->concat($recesses);
 
-        // 7. Sort by start_time
         return $all->sortBy('start_time')->values()->all();
     }
 }

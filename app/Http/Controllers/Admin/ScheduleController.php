@@ -69,7 +69,7 @@ class ScheduleController extends Controller {
         }
 
         $setting = LessonSetting::current();
-        $slot = $setting->getSlotTime($validated['lesson_number']);
+        $slot = $setting->getSlotTime($validated['lesson_number'], $validated['day']);
         $validated['start_time'] = $slot['start'] ?? '00:00';
         $validated['end_time'] = $slot['end'] ?? '00:00';
 
@@ -114,7 +114,7 @@ class ScheduleController extends Controller {
         }
 
         $setting = LessonSetting::current();
-        $slot = $setting->getSlotTime($validated['lesson_number']);
+        $slot = $setting->getSlotTime($validated['lesson_number'], $validated['day']);
         $validated['start_time'] = $slot['start'] ?? '00:00';
         $validated['end_time'] = $slot['end'] ?? '00:00';
 
@@ -208,7 +208,7 @@ class ScheduleController extends Controller {
             );
 
             // Calculate time from lesson number
-            $slot = $setting->getSlotTime($lessonNumber);
+            $slot = $setting->getSlotTime($lessonNumber, $data['hari']);
 
             Schedule::create([
                 'school_class_id' => $class->id,
@@ -216,8 +216,8 @@ class ScheduleController extends Controller {
                 'subject_id' => $subject->id,
                 'day' => $data['hari'],
                 'lesson_number' => $lessonNumber,
-                'start_time' => $slot['start'],
-                'end_time' => $slot['end'],
+                'start_time' => $slot['start'] ?? '00:00',
+                'end_time' => $slot['end'] ?? '00:00',
             ]);
             $imported++;
         }

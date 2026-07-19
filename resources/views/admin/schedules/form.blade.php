@@ -89,6 +89,45 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    const dailySlots = @json([
+        'Senin' => \App\Models\LessonSetting::current()->getTimeSlotsForDay('Senin'),
+        'Selasa' => \App\Models\LessonSetting::current()->getTimeSlotsForDay('Selasa'),
+        'Rabu' => \App\Models\LessonSetting::current()->getTimeSlotsForDay('Rabu'),
+        'Kamis' => \App\Models\LessonSetting::current()->getTimeSlotsForDay('Kamis'),
+        'Jumat' => \App\Models\LessonSetting::current()->getTimeSlotsForDay('Jumat'),
+        'Sabtu' => \App\Models\LessonSetting::current()->getTimeSlotsForDay('Sabtu'),
+    ]);
+
+    const daySelect = document.querySelector('select[name="day"]');
+    const lessonSelect = document.querySelector('select[name="lesson_number"]');
+    const selectedLesson = "{{ old('lesson_number', $item->lesson_number ?? '') }}";
+
+    function updateLessonOptions() {
+        const day = daySelect.value;
+        if (!day) {
+            lessonSelect.innerHTML = '<option value="">Pilih Jam Pelajaran</option>';
+            return;
+        }
+        const slots = dailySlots[day] || dailySlots['Selasa']; // default fallback
+        
+        lessonSelect.innerHTML = '<option value="">Pilih Jam Pelajaran</option>';
+        
+        Object.values(slots).forEach(slot => {
+            const option = document.createElement('option');
+            option.value = slot.number;
+            option.textContent = `JP ${slot.number} — ${slot.start} s.d ${slot.end}`;
+            if (slot.number == selectedLesson) {
+                option.selected = true;
+            }
+            lessonSelect.appendChild(option);
+        });
+    }
+
+    if (daySelect && lessonSelect) {
+        daySelect.addEventListener('change', updateLessonOptions);
+        updateLessonOptions(); // run on load
+    }
+
     const typeSelect = document.getElementById('schedule-type');
     const subjectFields = document.getElementById('subject-fields-wrap');
     const globalFields = document.getElementById('global-fields-wrap');
