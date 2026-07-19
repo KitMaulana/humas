@@ -6,7 +6,21 @@
     <title>@yield('title', 'Admin Panel') — SIDACHEERS</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v=20260720a">
+    <style>
+        /* Force desktop layout on screens wider than 768px to bypass cached stylesheet */
+        @media (min-width: 769px) {
+            .main-content {
+                margin-left: 260px !important;
+            }
+            .sidebar {
+                transform: translateX(0) !important;
+            }
+            .topbar-toggle {
+                display: none !important;
+            }
+        }
+    </style>
     @yield('styles')
 </head>
 <body>
