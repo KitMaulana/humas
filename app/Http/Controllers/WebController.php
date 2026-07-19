@@ -212,7 +212,23 @@ class WebController extends Controller
             }
         }
         
-        return view('schedule', compact('classes', 'teachers', 'subjects', 'schedulesJson'));
+        $slotsJson = [];
+        $recessesJson = [];
+        foreach ($daysList as $day) {
+            $slotsJson[$day] = $lessonSetting->getTimeSlotsForDay($day);
+            $recessesJson[$day] = [];
+            foreach ($lessonSetting->getRecessesForDay($day) as $r) {
+                $recessesJson[$day][] = [
+                    'lesson_number' => $r->lesson_number,
+                    'start_time' => substr($r->start_time, 0, 5),
+                    'end_time' => substr($r->end_time, 0, 5),
+                    'title' => $r->title,
+                    'is_break' => (bool)$r->is_break,
+                ];
+            }
+        }
+        
+        return view('schedule', compact('classes', 'teachers', 'subjects', 'schedulesJson', 'slotsJson', 'recessesJson'));
     }
 
     public function achievements()

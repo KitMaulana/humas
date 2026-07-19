@@ -424,6 +424,8 @@
    DATA JADWAL (dari server / Laravel)
 ══════════════════════════════════════════════════ */
 const jadwalData = @json($schedulesJson);
+const slotsTemplate = @json($slotsJson);
+const recessesTemplate = @json($recessesJson);
 
 /* ══════════════════════════════════════════════════
    STATE
@@ -522,6 +524,7 @@ function renderTable() {
     const tbody = document.getElementById('tbody-main');
     if (!tbody) return;
 
+    const fk = document.getElementById('filterKelas').value;
     const rows = jadwalData[currentDay] || [];
     tbody.innerHTML = '';
     let count = 0;
@@ -530,46 +533,154 @@ function renderTable() {
     const dayMap = { 0: null, 1: 'Senin', 2: 'Selasa', 3: 'Rabu', 4: 'Kamis', 5: 'Jumat', 6: 'Sabtu' };
     const isToday = dayMap[new Date().getDay()] === currentDay;
 
-    rows.forEach(row => {
-        if (!rowMatchesFilter(row)) return;
-        count++;
-
-        const status = isToday ? getStatus(row) : 'upcoming';
-        const trClass = status === 'live' ? 'row-live' : '';
-        const jam = row.start_time + '–' + row.end_time;
-
-        if (row.title) {
-            let icon = 'fa-bullhorn';
-            let color = 'var(--primary-orange, #D4A017)';
-            let bg = 'rgba(212, 160, 23, 0.06)';
+    if (fk !== 'all') {
+        const classSelect = document.getElementById('filterKelas');
+        const className = classSelect.options[classSelect.selectedIndex].text;
+        
+        // Build timeline
+        const daySlots = slotsTemplate[currentDay] || {};
+        const dayRecesses = recessesTemplate[currentDay] || [];
+        
+        const timeline = [];
+        
+        // Add slots
+        Object.keys(daySlots).forEach(num => {
+            const slot = daySlots[num];
+            timeline.push({
+                is_recess: false,
+                lesson_number: parseInt(num),
+                start_time: slot.start,
+                end_time: slot.end
+            });
+        });
+        
+        // Add recesses
+        dayRecesses.forEach(rec => {
+            timeline.push({
+                is_recess: true,
+                lesson_number: rec.lesson_number,
+                start_time: rec.start_time,
+                end_time: rec.end_time,
+                title: rec.title,
+                is_break: rec.is_break
+            });
+        });
+        
+        // Sort timeline by start_time
+        timeline.sort((a, b) => a.start_time.localeCompare(b.start_time));
+        
+        timeline.forEach(item => {
+            const status = isToday ? getStatus(item) : 'upcoming';
+            const trClass = status === 'live' ? 'row-live' : '';
+            const jam = item.start_time + '–' + item.end_time;
             
-            if (row.is_break) {
-                icon = 'fa-coffee';
-                color = '#2ecc71';
-                bg = 'rgba(46, 204, 113, 0.06)';
+            if (item.is_recess) {
+                let icon = 'fa-bullhorn';
+                let color = 'var(--primary-orange, #D4A017)';
+                let bg = 'rgba(212, 160, 23, 0.06)';
+                
+                if (item.is_break) {
+                    icon = 'fa-coffee';
+                    color = '#2ecc71';
+                    bg = 'rgba(46, 204, 113, 0.06)';
+                }
+                
+                tbody.innerHTML += `
+                    <tr class="${trClass}" style="background: ${bg};">
+                        <td style="font-weight: 700; color: ${color};">JP ${item.lesson_number || '—'}</td>
+                        <td class="td-time">${jam}</td>
+                        <td colspan="3" class="td-mapel" style="font-weight: bold; text-align: left; padding-left: 20px; color: ${color};">
+                            <i class="fas ${icon}" style="margin-right: 8px;"></i> ${item.title} (Semua Kelas)
+                        </td>
+                        <td>${statusBadge(status)}</td>
+                    </tr>`;
+                count++;
+            } else {
+                // Find matching schedules in DB rows
+                const matches = rows.filter(r => {
+                    if (String(r.class_id) !== fk) return false;
+                    if (r.lesson_number !== item.lesson_number) return false;
+                    
+                    // Apply other active filters
+                    const fg = document.getElementById('filterGuru').value;
+                    const fm = document.getElementById('filterMapel').value;
+                    if (fg !== 'all' && String(r.teacher_id) !== fg) return false;
+                    if (fm !== 'all' && String(r.subject_id) !== fm) return false;
+                    
+                    return true;
+                });
+                
+                if (matches.length > 0) {
+                    matches.forEach(match => {
+                        tbody.innerHTML += `
+                            <tr class="${trClass}">
+                                <td style="font-weight: 700; color: var(--primary-orange, #D4A017);">JP ${match.lesson_number || '—'}</td>
+                                <td class="td-time">${jam}</td>
+                                <td class="td-mapel">${match.subject_name}</td>
+                                <td class="td-guru">${match.teacher_name}</td>
+                                <td><span class="td-kelas">${match.class_name}</span></td>
+                                <td>${statusBadge(status)}</td>
+                            </tr>`;
+                        count++;
+                    });
+                } else {
+                    // Only render empty slots if no other search is active or if it matches the general layout
+                    tbody.innerHTML += `
+                        <tr class="${trClass}" style="opacity: 0.6;">
+                            <td style="font-weight: 700; color: var(--text-muted, #a0aec0);">JP ${item.lesson_number}</td>
+                            <td class="td-time">${jam}</td>
+                            <td class="td-mapel" style="color: var(--text-muted, #a0aec0); font-style: italic;">—</td>
+                            <td class="td-guru" style="color: var(--text-muted, #a0aec0); font-style: italic;">—</td>
+                            <td><span class="td-kelas" style="background: #edf2f7; color: #718096;">${className}</span></td>
+                            <td>${statusBadge(status)}</td>
+                        </tr>`;
+                    count++;
+                }
             }
-            
-            tbody.innerHTML += `
-                <tr class="${trClass}" style="background: ${bg};">
-                    <td style="font-weight: 700; color: ${color};">JP ${row.lesson_number || '—'}</td>
-                    <td class="td-time">${jam}</td>
-                    <td colspan="3" class="td-mapel" style="font-weight: bold; text-align: left; padding-left: 20px; color: ${color};">
-                        <i class="fas ${icon}" style="margin-right: 8px;"></i> ${row.title} (Semua Kelas)
-                    </td>
-                    <td>${statusBadge(status)}</td>
-                </tr>`;
-        } else {
-            tbody.innerHTML += `
-                <tr class="${trClass}">
-                    <td style="font-weight: 700; color: var(--primary-orange, #D4A017);">JP ${row.lesson_number || '—'}</td>
-                    <td class="td-time">${jam}</td>
-                    <td class="td-mapel">${row.subject_name}</td>
-                    <td class="td-guru">${row.teacher_name}</td>
-                    <td><span class="td-kelas">${row.class_name}</span></td>
-                    <td>${statusBadge(status)}</td>
-                </tr>`;
-        }
-    });
+        });
+    } else {
+        // Fallback to original layout
+        rows.forEach(row => {
+            if (!rowMatchesFilter(row)) return;
+            count++;
+
+            const status = isToday ? getStatus(row) : 'upcoming';
+            const trClass = status === 'live' ? 'row-live' : '';
+            const jam = row.start_time + '–' + row.end_time;
+
+            if (row.title) {
+                let icon = 'fa-bullhorn';
+                let color = 'var(--primary-orange, #D4A017)';
+                let bg = 'rgba(212, 160, 23, 0.06)';
+                
+                if (row.is_break) {
+                    icon = 'fa-coffee';
+                    color = '#2ecc71';
+                    bg = 'rgba(46, 204, 113, 0.06)';
+                }
+                
+                tbody.innerHTML += `
+                    <tr class="${trClass}" style="background: ${bg};">
+                        <td style="font-weight: 700; color: ${color};">JP ${row.lesson_number || '—'}</td>
+                        <td class="td-time">${jam}</td>
+                        <td colspan="3" class="td-mapel" style="font-weight: bold; text-align: left; padding-left: 20px; color: ${color};">
+                            <i class="fas ${icon}" style="margin-right: 8px;"></i> ${row.title} (Semua Kelas)
+                        </td>
+                        <td>${statusBadge(status)}</td>
+                    </tr>`;
+            } else {
+                tbody.innerHTML += `
+                    <tr class="${trClass}">
+                        <td style="font-weight: 700; color: var(--primary-orange, #D4A017);">JP ${row.lesson_number || '—'}</td>
+                        <td class="td-time">${jam}</td>
+                        <td class="td-mapel">${row.subject_name}</td>
+                        <td class="td-guru">${row.teacher_name}</td>
+                        <td><span class="td-kelas">${row.class_name}</span></td>
+                        <td>${statusBadge(status)}</td>
+                    </tr>`;
+            }
+        });
+    }
 
     if (count === 0) {
         tbody.innerHTML = '<tr class="no-result-row"><td colspan="6">Tidak ada jadwal yang cocok dengan filter yang dipilih.</td></tr>';
