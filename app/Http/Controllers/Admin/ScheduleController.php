@@ -181,8 +181,9 @@ class ScheduleController extends Controller {
             }
 
             $lessonNumber = (int) $data['jam_ke'];
-            if ($lessonNumber < 1 || $lessonNumber > $setting->total_lessons) {
-                $errors[] = "Baris {$lineNum}: Jam ke-{$lessonNumber} di luar range (1-{$setting->total_lessons}).";
+            $daySlots = $setting->getTimeSlotsForDay($data['hari']);
+            if (!isset($daySlots[$lessonNumber])) {
+                $errors[] = "Baris {$lineNum}: Jam ke-{$lessonNumber} tidak valid untuk hari {$data['hari']}.";
                 continue;
             }
 
@@ -210,15 +211,19 @@ class ScheduleController extends Controller {
             // Calculate time from lesson number
             $slot = $setting->getSlotTime($lessonNumber, $data['hari']);
 
-            Schedule::create([
-                'school_class_id' => $class->id,
-                'teacher_id' => $teacher->id,
-                'subject_id' => $subject->id,
-                'day' => $data['hari'],
-                'lesson_number' => $lessonNumber,
-                'start_time' => $slot['start'] ?? '00:00',
-                'end_time' => $slot['end'] ?? '00:00',
-            ]);
+            Schedule::updateOrCreate(
+                [
+                    'school_class_id' => $class->id,
+                    'day' => $data['hari'],
+                    'lesson_number' => $lessonNumber,
+                ],
+                [
+                    'teacher_id' => $teacher->id,
+                    'subject_id' => $subject->id,
+                    'start_time' => $slot['start'] ?? '00:00',
+                    'end_time' => $slot['end'] ?? '00:00',
+                ]
+            );
             $imported++;
         }
         fclose($handle);
